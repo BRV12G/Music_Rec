@@ -1,107 +1,6 @@
-// import Image from "next/image";
 
-// export default function Home() {
-//   return (
-//     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-//       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-//         <Image
-//           className="dark:invert"
-//           src="/next.svg"
-//           alt="Next.js logo"
-//           width={180}
-//           height={38}
-//           priority
-//         />
-//         <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-//           <li className="mb-2">
-//             Get started by editing{" "}
-//             <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-//               src/app/page.tsx
-//             </code>
-//             .
-//           </li>
-//           <li>Save and see your changes instantly.</li>
-//         </ol>
-
-//         <div className="flex gap-4 items-center flex-col sm:flex-row">
-//           <a
-//             className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-//             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-//             target="_blank"
-//             rel="noopener noreferrer"
-//           >
-//             <Image
-//               className="dark:invert"
-//               src="/vercel.svg"
-//               alt="Vercel logomark"
-//               width={20}
-//               height={20}
-//             />
-//             Deploy now
-//           </a>
-//           <a
-//             className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-//             href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-//             target="_blank"
-//             rel="noopener noreferrer"
-//           >
-//             Read our docs
-//           </a>
-//         </div>
-//       </main>
-//       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-//         <a
-//           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-//           href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           <Image
-//             aria-hidden
-//             src="/file.svg"
-//             alt="File icon"
-//             width={16}
-//             height={16}
-//           />
-//           Learn
-//         </a>
-//         <a
-//           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-//           href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           <Image
-//             aria-hidden
-//             src="/window.svg"
-//             alt="Window icon"
-//             width={16}
-//             height={16}
-//           />
-//           Examples
-//         </a>
-//         <a
-//           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-//           href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           <Image
-//             aria-hidden
-//             src="/globe.svg"
-//             alt="Globe icon"
-//             width={16}
-//             height={16}
-//           />
-//           Go to nextjs.org →
-//         </a>
-//       </footer>
-//     </div>
-//   );
-// }
-
-// app/page.tsx
 "use client";
+// app/page.tsx
 
 import { useState } from "react";
 
@@ -132,58 +31,87 @@ const Home = () => {
     formData.append("photo", image);
     formData.append("language", language);
 
-    const response = await fetch("/api/upload-photo", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const response = await fetch("/api/upload-photo", {
+        method: "POST",
+        body: formData,
+      });
 
-    const data = await response.json();
-    setRecommendations(data.recommendations);
+      const data = await response.json();
+
+      if (data.error) {
+        alert("Error: " + data.error);
+        return;
+      }
+
+      setRecommendations(data.recommendations);
+    } catch (error) {
+      console.error("Error submitting the form: ", error);
+      alert("An error occurred while fetching recommendations.");
+    }
   };
 
   return (
-    <div>
-      <h1>Music Recommendation Based on Photo</h1>
-      <form onSubmit={handleFormSubmit}>
-        <div>
-          <label>Upload Image: </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            required
-          />
-        </div>
-        <div>
-          <label>Choose Song Language: </label>
-          <select onChange={handleLanguageChange} value={language}>
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            {/* Add more languages as needed */}
-          </select>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
+    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-500 flex justify-center items-center p-6">
+      <div className="max-w-lg w-full bg-white p-8 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">Music Recommendation Based on Photo</h1>
 
-      <div>
-        <h2>Recommended Songs:</h2>
-        {recommendations.length > 0 ? (
-          <ul>
-            {recommendations.map((song, index) => (
-              <li key={index}>
-                <p>{song.title} by {song.artist}</p>
-                <img src={song.albumArt} alt={`${song.title} album`} />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No recommendations yet</p>
-        )}
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          <div className="mb-4">
+            <label htmlFor="photo" className="block text-gray-700 font-semibold">Upload Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="w-full mt-2 border-2 border-gray-300 p-2 rounded-md"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="language" className="block text-gray-700 font-semibold">Choose Song Language</label>
+            <select
+              id="language"
+              value={language}
+              onChange={handleLanguageChange}
+              className="w-full mt-2 border-2 border-gray-300 p-2 rounded-md"
+            >
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              {/* Add more languages as needed */}
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300"
+          >
+            Submit
+          </button>
+        </form>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold text-gray-800">Recommended Songs:</h2>
+          {recommendations.length > 0 ? (
+            <ul className="mt-4 space-y-4">
+              {recommendations.map((song, index) => (
+                <li key={index} className="flex items-center justify-between bg-gray-100 p-4 rounded-lg shadow-sm">
+                  <div>
+                    <p className="font-semibold text-gray-800">{song.title}</p>
+                    <p className="text-gray-600">{song.artist}</p>
+                  </div>
+                  <img src={song.albumArt} alt={`${song.title} album`} className="w-12 h-12 rounded-full" />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-600 mt-4">No recommendations yet</p>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
 export default Home;
-
