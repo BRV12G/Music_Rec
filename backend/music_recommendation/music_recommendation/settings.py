@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+from django.conf.urls.static import static
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Other apps
+    'rest_framework',  # Add DRF
+    'recommendation',  # Add your app here
 ]
 
 MIDDLEWARE = [
@@ -121,3 +124,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Media files (file uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# # settings.py
+
+# # Add the following to allow media file serving in development (for testing only)
+# if DEBUG:
+#     urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
